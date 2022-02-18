@@ -1,0 +1,6 @@
+- #!/bin/bash/
+- The bash interpreter is in the /bin/bash/.
+- We are telling this file is not any file this is the bash file; treat it like a bash file.
+- When we use the file command; Then the output is **Bourne-Again shell**
+- If we give the python script then we have to give the **python interpreter** and save it as the .sh file
+- 

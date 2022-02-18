@@ -1,0 +1,2 @@
+Packages needed:
+- xdotool

@@ -138,7 +138,9 @@ do
             read password
             echo "Website"
             read website
-            echo '{"WEBSITE" : "'$website'","EMAIL" : "'$email'" ,"PASSWORD" : "'$password'"}'>>$unique_id.json
+            id=$(echo $Token | jq '.ID')
+            #enc_password=$(echo $password| openssl enc -aes-256-cbc -md sha512 -a -pbkdf2 -iter 100000 -salt -pass pass:'pick.your.password')
+            echo '{"WEBSITE" : "'$website'","EMAIL" : "'$email'" ,"PASSWORD" : "'$password'"}'>>$id.json
         fi
     elif [ $option_user -eq 4 ]
     then
@@ -148,7 +150,24 @@ do
             echo "Enter the name of the website you wanna search : "
             read website
             id=$(echo $Token | jq '.ID')
-            site_data=$(grep -i "$website" $id.json)
+            grep -i "$website" $id.json >> site_data.txt
+
+            while read pointer; do
+                Email=$(echo $pointer | jq '.EMAIL')
+                Password=$(echo $pointer | jq '.PASSWORD')
+                echo $Email
+                echo $Password
+            done <site_data.txt
+            #---
+            echo "">site_data.txt
+        fi
+    elif [ $option_user -eq 5 ]
+    then
+        if [ ! -z $token_exits ]
+        then
+            clear
+            id=$(echo $Token | jq '.ID')
+            site_data=$(cat $id.json)
             echo $site_data
         fi
     else    

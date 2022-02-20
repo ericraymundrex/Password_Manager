@@ -22,8 +22,7 @@ Sign_Up () {
     sha256_function $1
     fingerprint=$hash
 
-    sha256_function $2
-    unique_id=$hash
+    unique_id=$(cat User.json | wc -l)
 }
 # --------------------------------------------------------------------------------
 # 1 -> User Name
@@ -66,10 +65,20 @@ Auth () {
 # --------------------------------------------------------------------------------
 # -----------------------------------MAIN CODE------------------------------------
 ending=1
-while [ $ending != 0 ]
+while [ $ending -ne 0 ]
 do
     clear
-    echo "1. Sign Up\n2. Sign In\n3. Log out"
+    echo "1. Sign Up\n2. Sign In\n"
+
+    token_exits=$(echo $Token | jq '.USER')
+    
+    if [ ! -z $token_exits ]
+    then
+        clear
+        echo "1. Sign up with different account || 2. Add new user\n"
+        echo "Signed in as : " $token_exits "\n"
+        echo "3. Addind new account\n4. Search Website\n5. Show all accounts\n 6. logout"
+    fi
 
     # Reading an option
     read option_user
@@ -86,8 +95,9 @@ do
         if [ -z $user_exits ]
         then
             Sign_Up $pass $user
-            #------
+            #------------------
             echo '{"ID" : "'$unique_id'" ,"USER" : "'$user'" ,"FINGERPRINT" : "'$fingerprint'"}'>>User.json
+            touch "$unique_id".json
             echo "SUCCESSFULLY SIGNED - UP"
         else
             
@@ -95,8 +105,8 @@ do
         fi
     elif [ $option_user -eq 2 ]
     then
-        user_exits=$(echo $Token | jq '.USER')
-        if [ -z $user_exits ]
+        token_exits=$(echo $Token | jq '.USER')
+        if [ -z $token_exits ]
         then
             clear
             echo "User Name : "
@@ -110,11 +120,37 @@ do
             echo "Signed in as"
             echo $Token | jq '.USER'
         fi
-    elif [ $option_user -eq 3 ]
+    elif [ $option_user -eq 6 ]
     then
         clear
         Token=''
         echo "Loged out"
+    elif [ $option_user -eq 3 ]
+    then
+        if [ ! -z $token_exits ]
+        then
+            clear
+            echo "Signed in as : " $token_exits "\n"
+            echo "Add New Account\n"
+            echo "Enter the email"
+            read email
+            echo "Enter the password"
+            read password
+            echo "Website"
+            read website
+            echo '{"WEBSITE" : "'$website'","EMAIL" : "'$email'" ,"PASSWORD" : "'$password'"}'>>$unique_id.json
+        fi
+    elif [ $option_user -eq 4 ]
+    then
+        if [ ! -z $token_exits ]
+        then
+            clear
+            echo "Enter the name of the website you wanna search : "
+            read website
+            id=$(echo $Token | jq '.ID')
+            site_data=$(grep -i "$website" $id.json)
+            echo $site_data
+        fi
     else    
         clear
         echo "Enter a valid option"

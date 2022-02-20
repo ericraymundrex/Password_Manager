@@ -1,5 +1,5 @@
 **PROJECT TITLE: PASSWORD MANAGER**
-- Training in Linux and Git
+- Training in Linux(bash) and Git
 
 **The branches:**
 - mouse Automation

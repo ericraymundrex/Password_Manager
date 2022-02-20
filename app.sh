@@ -5,8 +5,10 @@ Token=''
 
 # --------------------------------------------------------------------------------
 # To create a SHA256 hash
+
 # 1    -> Parameter
 # Hash -> The hash code
+
 hash=''
 sha256_function () {
     hash=$(echo $1  | sha256 -s $AUTH_STRING | base64)
@@ -64,10 +66,10 @@ Auth () {
 # --------------------------------------------------------------------------------
 # -----------------------------------MAIN CODE------------------------------------
 ending=1
-while [ $ending -ne 0 ]
+while [ $ending != 0 ]
 do
     clear
-    echo "1. Sign Up\n2. Sign In"
+    echo "1. Sign Up\n2. Sign In\n3. Log out"
 
     # Reading an option
     read option_user
@@ -93,7 +95,8 @@ do
         fi
     elif [ $option_user -eq 2 ]
     then
-        if [ -z $Token ]
+        user_exits=$(echo $Token | jq '.USER')
+        if [ -z $user_exits ]
         then
             clear
             echo "User Name : "
@@ -103,13 +106,20 @@ do
             Auth $user $pass
             echo $Token
         else
-            echo "Already logged in"
+            clear
+            echo "Signed in as"
+            echo $Token | jq '.USER'
         fi
+    elif [ $option_user -eq 3 ]
+    then
+        clear
+        Token=''
+        echo "Loged out"
     else    
         clear
         echo "Enter a valid option"
     fi
 
-    echo "PRESS ANY NUMBER TO MAIN PAGE.\nEnter 0+ENTER to EXIT"
+    echo "\nPRESS ANY NUMBER TO MAIN PAGE.\nEnter 0+ENTER to EXIT"
     read ending
 done
